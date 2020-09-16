@@ -1,0 +1,23 @@
+---
+- name: debian | Installing Packages
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php
+      - mariadb-server
+      - php-imagick
+      - php{{ nextcloud_php_ver }}-bcmath
+      - php{{ nextcloud_php_ver }}-curl
+      - php{{ nextcloud_php_ver }}-gd
+      - php{{ nextcloud_php_ver }}-gmp
+      - php{{ nextcloud_php_ver }}-intl
+      - php{{ nextcloud_php_ver }}-mbstring
+      - php{{ nextcloud_php_ver }}-mysql
+      - php{{ nextcloud_php_ver }}-xml
+      - php{{ nextcloud_php_ver }}-zip
+      - python3-pymysql
+      - unzip
+    state: present
+  become: true
+  register: result
+  until: result is successful

@@ -1,0 +1,17 @@
+---
+- name: db | Creating Nextcloud DB
+  mysql_db:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    name: "{{ nextcloud_db }}"
+    state: present
+  become: true
+
+- name: db | Creating Nexcloud DB User
+  mysql_user:
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    name: "{{ nextcloud_db_user }}"
+    password: "{{ nextcloud_db_pass }}"
+    priv: "{{ nextcloud_db }}.*:ALL,GRANT"
+    state: present
+  become: true
+  no_log: true

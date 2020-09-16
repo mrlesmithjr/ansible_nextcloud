@@ -1,0 +1,7 @@
+---
+- name: set_facts | Defining PHP Version
+  set_fact:
+    nextcloud_php_ver: 7.4
+  when:
+    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_version is version('20.04', '==')

@@ -1,0 +1,68 @@
+---
+- name: web | Extracting Nextcloud Package
+  unarchive:
+    creates: /var/www/nextcloud
+    dest: /var/www
+    group: www-data
+    mode: u=rwx,g=rx,o=rx
+    owner: www-data
+    remote_src: true
+    src: "{{ nextcloud_package }}"
+  become: true
+  register: _nextcloud_package
+
+- name: web | Configuring Apache Site
+  copy:
+    content: |
+      Alias /nextcloud "/var/www/nextcloud/"
+
+      <Directory /var/www/nextcloud/>
+        Require all granted
+        AllowOverride All
+        Options FollowSymLinks MultiViews
+
+        <IfModule mod_dav.c>
+          Dav off
+        </IfModule>
+
+      </Directory>
+    dest: /etc/apache2/sites-available/nextcloud.conf
+    mode: u=rw,g=r,o=r
+  become: true
+  register: _nextcloud_site
+  notify:
+    - restart apache2
+
+- name: web | Enabling Nextcloud Site
+  command: a2ensite nextcloud.conf
+  become: true
+  when: _nextcloud_site is changed
+  notify:
+    - restart apache2
+
+- name: web | Enabling Apache2 Modules
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  become: true
+  loop:
+    - dir
+    - env
+    - headers
+    - mime
+    - rewrite
+  notify:
+    - restart apache2
+
+- name: web | Configuring Nextcloud # noqa 305
+  shell: >
+    sudo -u www-data php occ  maintenance:install \
+    --database "mysql" \
+    --database-name "{{ nextcloud_db }}" \
+    --database-user "{{ nextcloud_db_user }}" \
+    --database-pass "{{ nextcloud_db_pass }}" \
+    --admin-user "{{ nextcloud_admin_user }}" \
+    --admin-pass "{{ nextcloud_admin_pass }}"
+  args:
+    chdir: /var/www/nextcloud
+  when: _nextcloud_package is changed

@@ -1,0 +1,14 @@
+---
+- name: services | Ensuring DB Server is Up
+  service:
+    name: mysql
+    state: started
+    enabled: true
+  become: true
+
+- name: services | Ensuring Web Server is Up
+  service:
+    name: apache2
+    state: started
+    enabled: true
+  become: true

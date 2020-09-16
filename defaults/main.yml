@@ -1,2 +1,9 @@
 ---
 # defaults file for ansible_nextcloud
+nextcloud_admin_pass: nextcloud
+nextcloud_admin_user: admin
+nextcloud_db: nextcloud
+nextcloud_db_user: nextcloud
+nextcloud_db_pass: nextcloud
+nextcloud_package: "https://download.nextcloud.com/server/releases/nextcloud-{{ nextcloud_version }}.zip"
+nextcloud_version: 19.0.3

@@ -1,2 +1,12 @@
 ---
 # tasks file for ansible_nextcloud
+- include_tasks: set_facts.yml
+
+- include_tasks: debian.yml
+  when: ansible_os_family == "Debian"
+
+- include_tasks: services.yml
+
+- include_tasks: db.yml
+
+- include_tasks: web.yml
